@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Application</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body style="background-color: black; color: beige">
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="display mb-5"><strong>CRUD APPLICATION</strong></h1>
+        </div>
+        <div class="main row justify-content-center">
+            <form id="student-form" class="row justify-content-center mb-4" autocomplete="off">
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="firstName">First Name</label>
+                    <input class="form-control" id="firstName" type="text" placeholder="Enter First Name">
+                </div>
+                <div class="col-10 col-md-8  mb-3">
+                    <label for="lastName">Last Name</label>
+                    <input class="form-control" id="lastName" type="text" placeholder="Enter Last Name">
+                </div>
+                <div class="col-10 col-md-8  mb-3">
+                    <label for="rollNo">Roll No</label>
+                    <input class="form-control" id="rollNo" type="text" placeholder="Enter Roll No">
+                </div>
+                <div class="col-10 col-md-8 ">
+                    <button class="btn btn-success" onclick="addStudent()">Submit</button>
+                </div>
+            </form>
+            <div class="col-12 col-md-8  mt-5">
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Roll No</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list">
+                        <!-- Student data will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="./data.js"></script>
+    <script>
+        function addStudent() {
+            // Get input values
+            var firstName = document.getElementById("firstName").value;
+            var lastName = document.getElementById("lastName").value;
+            var rollNo = document.getElementById("rollNo").value;
+
+            // Validate input values
+            if (firstName && lastName && rollNo) {
+                // Create a new row for the table
+                var newRow = document.createElement("tr");
+
+                // Add data cells
+                var cells = ["firstName", "lastName", "rollNo"];
+                cells.forEach(function (cellId) {
+                    var cell = document.createElement("td");
+                    cell.textContent = document.getElementById(cellId).value;
+                    newRow.appendChild(cell);
+                });
+
+                // Add action buttons
+                var actionCell = document.createElement("td");
+                var editButton = document.createElement("a");
+                editButton.href = "#";
+                editButton.className = "btn btn-warning btn-sm edit";
+                editButton.textContent = "Edit";
+                editButton.onclick = function () {
+                    editStudent(newRow);
+                };
+
+                var deleteButton = document.createElement("a");
+                deleteButton.href = "#";
+                deleteButton.className = "btn btn-danger btn-sm delete";
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function () {
+                    deleteStudent(newRow);
+                };
+
+                actionCell.appendChild(editButton);
+                actionCell.appendChild(deleteButton);
+                newRow.appendChild(actionCell);
+
+                // Append the new row to the table
+                document.getElementById("student-list").appendChild(newRow);
+
+                // Clear input fields
+                document.getElementById("firstName").value = "";
+                document.getElementById("lastName").value = "";
+                document.getElementById("rollNo").value = "";
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        function editStudent(row) {
+            // Populate form fields with data from the selected row
+            document.getElementById("firstName").value = row.children[0].textContent;
+            document.getElementById("lastName").value = row.children[1].textContent;
+            document.getElementById("rollNo").value = row.children[2].textContent;
+
+            // Remove the selected row
+            row.remove();
+            alert("Data edited")
+        }
+
+        function deleteStudent(row) {
+            // Remove the selected row
+            row.remove();
+            alert("Student Data deleted")
+            showAlert("Student data deleted")
+        }
+    </script>
+</body>
+</html>
