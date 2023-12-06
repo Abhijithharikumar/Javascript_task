@@ -25,8 +25,12 @@
                     <label for="rollNo">Roll No</label>
                     <input class="form-control" id="rollNo" type="text" placeholder="Enter Roll No">
                 </div>
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="description">Description</label>
+                    <input class="form-control" id="description" type="text" placeholder="Enter Description">
+                </div>                
                 <div class="col-10 col-md-8 ">
-                    <button class="btn btn-success" onclick="addStudent()">Submit</button>
+                    <button id="submitBtn" class="btn btn-success" onclick="addStudent()" disabled>Submit</button>
                 </div>
             </form>
             <div class="col-12 col-md-8  mt-5">
@@ -36,6 +40,7 @@
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Roll No</th>
+                            <th>Description</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -48,76 +53,100 @@
     </div>
     <script src="./data.js"></script>
     <script>
-        function addStudent() {
-            // Get input values
-            var firstName = document.getElementById("firstName").value;
-            var lastName = document.getElementById("lastName").value;
-            var rollNo = document.getElementById("rollNo").value;
+        // This function is called when you click the "Submit" button to add a new student.
+function addStudent(){
+    // Get the values you typed for first name, last name, and roll number.
+    var firstName = document.getElementById("firstName").value;
+    var lastName = document.getElementById("lastName").value;
+    var rollNo = document.getElementById("rollNo").value;
+    var description =document.getElementById("description").value;
+    // Check if the description has more than 50 words.
+    var wordCount = description.split(/\s+/).length;
 
-            // Validate input values
-            if (firstName && lastName && rollNo) {
-                // Create a new row for the table
-                var newRow = document.createElement("tr");
+    // Check if you filled in all the fields.
+    if (firstName && lastName && rollNo && description && wordCount>50) {
+        // If everything is filled, create a new row in a special list (like a table).
+        var newRow = document.createElement("tr");
+         // Enable the submit button.
+        document.getElementById("submitBtn").disabled = true;
 
-                // Add data cells
-                var cells = ["firstName", "lastName", "rollNo"];
-                cells.forEach(function (cellId) {
-                    var cell = document.createElement("td");
-                    cell.textContent = document.getElementById(cellId).value;
-                    newRow.appendChild(cell);
-                });
+        // Put the first name, last name, and roll number in this new row.
+        var cells = ["firstName", "lastName", "rollNo","description"];
+        cells.forEach(function (cellId) {
+            var cell = document.createElement("td");
+            cell.textContent = document.getElementById(cellId).value;
+            newRow.appendChild(cell);
+        });
 
-                // Add action buttons
-                var actionCell = document.createElement("td");
-                var editButton = document.createElement("a");
-                editButton.href = "#";
-                editButton.className = "btn btn-warning btn-sm edit";
-                editButton.textContent = "Edit";
-                editButton.onclick = function () {
-                    editStudent(newRow);
-                };
+        // Create buttons (like "Edit" and "Delete") and put them in the new row.
+        var actionCell = document.createElement("td");
+        var editButton = document.createElement("a");
+        var deleteButton = document.createElement("a");
 
-                var deleteButton = document.createElement("a");
-                deleteButton.href = "#";
-                deleteButton.className = "btn btn-danger btn-sm delete";
-                deleteButton.textContent = "Delete";
-                deleteButton.onclick = function () {
-                    deleteStudent(newRow);
-                };
+        // Customize the buttons to look nice.
+        editButton.href = "#";
+        editButton.className = "btn btn-warning btn-sm edit";
+        editButton.textContent = "Edit";
+        editButton.onclick = function () {
+            // When you click "Edit," it does something special (calls the editStudent function).
+            editStudent(newRow);
+        };
 
-                actionCell.appendChild(editButton);
-                actionCell.appendChild(deleteButton);
-                newRow.appendChild(actionCell);
+        deleteButton.href = "#";
+        deleteButton.className = "btn btn-danger btn-sm delete";
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = function () {
+            // When you click "Delete," it does something special (calls the deleteStudent function).
+            deleteStudent(newRow);
+        };
 
-                // Append the new row to the table
-                document.getElementById("student-list").appendChild(newRow);
+        actionCell.appendChild(editButton);
+        actionCell.appendChild(deleteButton);
+        newRow.appendChild(actionCell);
 
-                // Clear input fields
-                document.getElementById("firstName").value = "";
-                document.getElementById("lastName").value = "";
-                document.getElementById("rollNo").value = "";
-            } else {
-                alert("Please fill in all fields.");
-            }
-        }
+        // Add this new row to the special list (like adding a new student to your class list).
+        document.getElementById("student-list").appendChild(newRow);
 
-        function editStudent(row) {
-            // Populate form fields with data from the selected row
-            document.getElementById("firstName").value = row.children[0].textContent;
-            document.getElementById("lastName").value = row.children[1].textContent;
-            document.getElementById("rollNo").value = row.children[2].textContent;
+        // Clear the fields where you typed the student's information.
+        document.getElementById("firstName").value = "";
+        document.getElementById("lastName").value = "";
+        document.getElementById("rollNo").value = "";
+        document.getElementById("description").value = "";
+    } else {
+        // If you forgot to fill in something, the computer tells you to fill in all the fields.
+        alert("Please fill in all fields.");
+        // If the conditions are not met, disable the submit button.
+        document.getElementById("submitBtn").disabled = true;
+    }
+}
 
-            // Remove the selected row
-            row.remove();
-            alert("Data edited")
-        }
+// This function is called when you click the "Edit" button next to a student's name.
+function editStudent(row) {
+    // It takes the information you already typed for a student and puts it back in the fields.
+    document.getElementById("firstName").value = row.children[0].textContent;
+    document.getElementById("lastName").value = row.children[1].textContent;
+    document.getElementById("rollNo").value = row.children[2].textContent;
+    document.getElementById("description").value = row.children[3].textContent;
 
-        function deleteStudent(row) {
-            // Remove the selected row
-            row.remove();
-            alert("Student Data deleted")
-            showAlert("Student data deleted")
-        }
-    </script>
+    // It also removes this student's name from the list (like editing the student's information).
+    row.remove();
+
+    // The computer says something like "Data edited" to let you know you changed something.
+    alert("Data edited");
+}
+
+// This function is called when you click the "Delete" button next to a student's name.
+function deleteStudent(row) {
+    // It removes this student's name from the list (like deleting a student from your class list).
+    row.remove();
+
+    // The computer says something like "Student Data deleted" to let you know you removed a student.
+    alert("Student Data deleted");
+    showAlert("Datat Get Deletd")
+
+    // There seems to be a reference to showAlert() here, but the showAlert function is not defined in your code.
+}
+</script>
+
 </body>
 </html>
