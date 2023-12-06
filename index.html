@@ -27,11 +27,12 @@
                 </div>
                 <div class="col-10 col-md-8 mb-3">
                     <label for="description">Description</label>
-                    <input class="form-control" id="description" type="text" placeholder="Enter Description">
-                </div>                
+                    <input class="form-control" id="description" type="text" placeholder="Enter Description" oninput="checkDescriptionLength()">
+                </div>                               
                 <div class="col-10 col-md-8 ">
-                    <button id="submitBtn" class="btn btn-success" onclick="addStudent()" disabled>Submit</button>
+                    <button id="submitButton" class="btn btn-success" onclick="addStudent()" disabled>Submit</button>
                 </div>
+                <span id="wordCountMessage" class="text-muted">0 words</span>                
             </form>
             <div class="col-12 col-md-8  mt-5">
                 <table class="table table-striped table-dark">
@@ -53,6 +54,11 @@
     </div>
     <script src="./data.js"></script>
     <script>
+        function updateSubmitButton() {
+            var description = document.getElementById("description").value;
+            var wordCount = description.split(/\s+/).length;
+            document.getElementById("submitBtn").disabled = wordCount <= 50;
+        }
         // This function is called when you click the "Submit" button to add a new student.
 function addStudent(){
     // Get the values you typed for first name, last name, and roll number.
@@ -61,14 +67,13 @@ function addStudent(){
     var rollNo = document.getElementById("rollNo").value;
     var description =document.getElementById("description").value;
     // Check if the description has more than 50 words.
-    var wordCount = description.split(/\s+/).length;
 
     // Check if you filled in all the fields.
-    if (firstName && lastName && rollNo && description && wordCount>50) {
+    if (firstName && lastName && rollNo && description) {
         // If everything is filled, create a new row in a special list (like a table).
         var newRow = document.createElement("tr");
          // Enable the submit button.
-        document.getElementById("submitBtn").disabled = true;
+        
 
         // Put the first name, last name, and roll number in this new row.
         var cells = ["firstName", "lastName", "rollNo","description"];
@@ -112,14 +117,29 @@ function addStudent(){
         document.getElementById("lastName").value = "";
         document.getElementById("rollNo").value = "";
         document.getElementById("description").value = "";
+        document.getElementById("submitBtn").disabled = true;
     } else {
         // If you forgot to fill in something, the computer tells you to fill in all the fields.
-        alert("Please fill in all fields and ensure the description has more than 50 words.");
-        // If the conditions are not met, disable the submit button.
-        document.getElementById("submitBtn").disabled = true;
+        alert("Please fill in all fields.");
+        
     }
 }
+// This function is called on input in the description field to check the word count.
+function checkDescriptionLength() {
+    var descriptionInput = document.getElementById("description");
+    var wordCountMessage = document.getElementById("wordCountMessage");
+    var submitButton = document.getElementById("submitButton");
 
+    var words = descriptionInput.value.split(/\s+/).filter(function (word) {
+        return word.length > 0;
+    });
+
+    var wordCount = words.length;
+    wordCountMessage.textContent = wordCount + (wordCount === 1 ? " word" : " words");
+
+    // Enable or disable the submit button based on the word count.
+    submitButton.disabled = wordCount <= 50;
+}
 // This function is called when you click the "Edit" button next to a student's name.
 function editStudent(row) {
     // It takes the information you already typed for a student and puts it back in the fields.
@@ -131,7 +151,6 @@ function editStudent(row) {
     // It also removes this student's name from the list (like editing the student's information).
     row.remove();
 
-    // The computer says something like "Data edited" to let you know you changed something.
     alert("Data edited");
 }
 
@@ -142,9 +161,7 @@ function deleteStudent(row) {
 
     // The computer says something like "Student Data deleted" to let you know you removed a student.
     alert("Student Data deleted");
-    showAlert("Datat Get Deletd")
-
-    // There seems to be a reference to showAlert() here, but the showAlert function is not defined in your code.
+    showAlert("Datat Get Deleted")
 }
 </script>
 
